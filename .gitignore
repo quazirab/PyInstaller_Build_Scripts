@@ -1,0 +1,6 @@
+*.pyc
+envr/
+__pycache__/
+.vscode/
+*.log
+*.code-workspace
