@@ -37,8 +37,8 @@ def versionFileDelete():
 
 def specFileDelete(buildType='debug'):
     os.chdir(f'{buildLocation}')
-    if os.path.isfile(f'build/r{buildType}.spec'):
-        os.remove(f'build/r{buildType}.spec')
+    if os.path.isfile(f'r{buildType}.spec'):
+        os.remove(f'r{buildType}.spec')
     os.chdir('..')
 
 def builder(versionNumber,buildType='debug'):
@@ -50,9 +50,9 @@ def builder(versionNumber,buildType='debug'):
     4. Updates the version information in the executable
     '''
     specCreator(buildType)
-    build(versionNumber, buildType)
+    # build(versionNumber, buildType)
     specFileDelete(buildType)
-    versionUpdate(versionNumber, buildType)
+    # versionUpdate(versionNumber, buildType)
 
 if __name__ == '__main__':
     # Generate Version Dictionary
