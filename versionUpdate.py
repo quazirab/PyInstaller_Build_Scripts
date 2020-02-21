@@ -22,8 +22,7 @@ def getCommitNumber():
     out,_ = subprocess.Popen(['git', 'rev-list', 'HEAD', '--count'], 
            stdout=subprocess.PIPE, 
            stderr=subprocess.STDOUT).communicate()
-    return out.rstrip().decode('ascii')
-
+    return str(int(out)+1)
 
 def updateVersion(commitNumber,moduleName=None):
     '''
@@ -46,7 +45,13 @@ def updateVersion(commitNumber,moduleName=None):
     with open('__init__.py','w') as file:
         file.write(line)
 
-    subprocess.call(['git', 'add', '__init__.py',])
+    version = re.findall(r"'(.+?)'",line)[-1]
+    
+    try:
+        subprocess.call(['git', 'tag', f'v{version}'])
+    except:
+        pass
+    subprocess.call(['git', 'add', '__init__.py'])
     
 
 if __name__ == '__main__':
