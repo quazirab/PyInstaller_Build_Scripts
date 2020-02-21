@@ -44,10 +44,12 @@ def updateVersion(commitNumber,moduleName=None):
         file.write(line)
 
 if __name__ == '__main__':
+    print('Version Update in module started')
     moduleName = sys.argv[-1]
     if '.py' in moduleName:
         updateVersion(getCommitNumber())
     else:
         updateVersion(getCommitNumber(),moduleName)
+    print('Version Update in module finished')
         
     
