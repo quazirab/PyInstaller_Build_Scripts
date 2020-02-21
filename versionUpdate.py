@@ -43,6 +43,9 @@ def updateVersion(commitNumber,moduleName=None):
     with open('__init__.py','w') as file:
         file.write(line)
 
+    subprocess.call(['git', 'add', '__init__.py',])
+    
+
 if __name__ == '__main__':
     moduleName = sys.argv[-1]
     if '.py' in moduleName:
