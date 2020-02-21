@@ -6,8 +6,11 @@ How it works :  1. runs git rev-list command to get commit number
                     if the module name is not same as main directory name - then run python versionUpdate.py myModule
                 3. reads the __version__.py in __init__.py and replaces only the CommitNumber
 
-Additional Step - to run as git pre-commit hook - add a file 'pre-commit' (no file extension) in .git->hooks with only one line :
-                python PyInstaller_Build_Scripts\\versionUpdate.py
+Additional Step - to run as git pre-commit hook - add a file 'pre-commit' (no file extension) in .git->hooks with the following lines :
+                #!/bin/sh
+                # To enable this hook, rename this file to "pre-commit".
+
+                python3 PyInstaller_Build_Scripts\\versionUpdate.py
 '''
 
 import sys,os,re,subprocess
