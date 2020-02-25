@@ -17,7 +17,7 @@ import os,sys
 from configparser import ConfigParser
 from datetime import datetime
 
-def versionTxtGenerator(infoDic):
+def versionTxtGenerator(infoDic,buildType='debug'):
     info =f'''VSVersionInfo(
         ffi=FixedFileInfo(
             # filevers and prodvers should be always a tuple with four items: (1, 2, 3, 4)
@@ -59,10 +59,10 @@ def versionTxtGenerator(infoDic):
         ]
         )'''
 
-    with open('build\\file_version_info.txt','w') as file:
+    with open(f'build\\file_version_info_{buildType}.txt','w') as file:
         file.write(info)
 
-def versionDicCreator(moduleName=None):
+def versionDicCreator(buildType='debug',moduleName=None):
     if not moduleName:
         moduleName = os.getcwd().split('\\')[-1]
     import sys
@@ -94,6 +94,9 @@ def versionDicCreator(moduleName=None):
         'Date':date
 
     }
+    if buildType=='debug':
+        infoDic['InternalName'] = infoDic['InternalName']+'-Debug'
+        infoDic['ProductName'] = infoDic['ProductName']+'-Debug'
     return infoDic
 
 if __name__ == "__main__":

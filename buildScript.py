@@ -26,13 +26,13 @@ def versionUpdate(versionNumber, buildType='debug'):
     os.chdir(f'{buildLocation}')
     fileLocation = f'{buildType}/version-{versionNumber}'
     fileLocation = f'"{fileLocation}/{os.listdir(fileLocation)[-1]}"'
-    subprocess.call(f'pyi-set_version file_version_info.txt {fileLocation}')
+    subprocess.call(f'pyi-set_version file_version_info_{buildType}.txt {fileLocation}')
     os.chdir('..')
 
-def versionFileDelete():
+def versionFileDelete(buildType='debug'):
     os.chdir(f'{buildLocation}')
-    if os.path.isfile('file_version_info.txt'):
-        os.remove('file_version_info.txt')
+    if os.path.isfile(f'file_version_info_{buildType}.txt'):
+        os.remove(f'file_version_info_{buildType}.txt')
     os.chdir('..')
 
 def specFileDelete(buildType='debug'):
@@ -41,29 +41,29 @@ def specFileDelete(buildType='debug'):
         os.remove(f'r{buildType}.spec')
     os.chdir('..')
 
-def builder(versionNumber,buildType='debug'):
+def builder(buildType='debug'):
     '''
     Performs all the steps required for building the program
-    1. Creates spec file
-    2. Buids the program
-    3. Deletes the spec file
-    4. Updates the version information in the executable
+    1. Creates the version information dictionary
+    2. Creates spec file for build
+    3. Builds the program
+    4. Deletes the spec file
+    5. Generates version file information for MS Application executable
+    6. Updates the version information in the executable
+    7. Deletes the version file
     '''
+    infoDic = versionDicCreator(buildType)
     specCreator(buildType)
-    build(versionNumber, buildType)
+    build(infoDic['ProductVersion'], buildType)
     specFileDelete(buildType)
-    versionUpdate(versionNumber, buildType)
+    versionTxtGenerator(infoDic,buildType)
+    versionUpdate(infoDic['ProductVersion'], buildType)
+    versionFileDelete(buildType)
 
 if __name__ == '__main__':
-    # Generate Version Dictionary
-    infoDic = versionDicCreator()
-    # Generate file_version_info.txt using the generated Dictionary
-    versionTxtGenerator(infoDic)
-    
+
     # ------------------------------- Debug --------------------------------
-    builder(infoDic['ProductVersion'])
+    builder()
     #-------------------------------- Release --------------------------------
-    builder(infoDic['ProductVersion'],buildType='release')
+    builder(buildType='release')
     
-    # Delete file_version_info.txt file
-    versionFileDelete()
