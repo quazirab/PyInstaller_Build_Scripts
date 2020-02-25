@@ -22,6 +22,8 @@ def getCommitNumber():
     out,_ = subprocess.Popen(['git', 'rev-list', 'HEAD', '--count'], 
            stdout=subprocess.PIPE, 
            stderr=subprocess.STDOUT).communicate()
+    if out[:5] == 'fatal':
+        out='0'
     return str(int(out)+1)
 
 def updateVersion(commitNumber,moduleName=None):
