@@ -14,6 +14,8 @@ Additional Step - to run as git pre-commit hook - add a file 'pre-commit' (no fi
 '''
 
 import sys,os,re,subprocess
+from tempfile import mkstemp
+from shutil import move, copymode
 
 def getCommitNumber():
     '''
@@ -34,23 +36,35 @@ def updateVersion(commitNumber,moduleName=None):
     if not moduleName:
         moduleName = os.getcwd().split('\\')[-1]
     os.chdir(moduleName)
-    line = None
-    with open('__init__.py','r') as file:
-        line = file.read()
-        version = re.findall(r"'(.+?)'",line)[-1]
-        version = version.split('.')
-        version[-1] = commitNumber
-        version = ".".join(version)
-        version = f"'{version}'"
-        line = re.sub(r"'(.+?)'",version,line)
-        
-    with open('__init__.py','w') as file:
-        file.write(line)
-
-    version = re.findall(r"'(.+?)'",line)[-1]
+    file_name = '__init__.py'
     
+    #Create a temp file
+    fh, abs_path = mkstemp()
+    new_version = None
+    with os.fdopen(fh,'w') as new_file:
+        with open(file_name,'r') as old_file:
+            for line in old_file:
+                if '__version__' in line:
+                    try:
+                        old_version = re.findall(r"'(.+?)'",line)[0]
+                        version = old_version.split('.')
+                        version[-1] = commitNumber
+                        new_version = ".".join(version)
+                        new_file.write(line.replace(old_version, new_version))
+                    except:
+                        new_file.write(line)
+                else:
+                    new_file.write(line)
+    
+    #Copy the file permissions from the old file to the new file
+    copymode(file_name, abs_path)
+    #Remove original file
+    os.remove(file_name)
+    #Move new file
+    move(abs_path, file_name)
+
     try:
-        subprocess.call(['git', 'tag', f'v{version}'])
+        subprocess.call(['git', 'tag', f'v{new_version}'])
     except:
         pass
     subprocess.call(['git', 'add', '__init__.py'])
