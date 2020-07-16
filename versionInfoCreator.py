@@ -14,7 +14,7 @@ How it works :  1. find the module name, which must should be same as main direc
                 3. Outputs a file_version_info.txt file ,main directory/build folder
 '''
 import os,sys
-from configparser import ConfigParser
+import toml
 from datetime import datetime
 
 def versionTxtGenerator(infoDic,buildType='debug'):
@@ -69,9 +69,7 @@ def versionDicCreator(buildType='debug',moduleName=None):
     sys.path.append('.')
     ver = __import__(f'{moduleName}').__version__
 
-    productInfo = ConfigParser()
-    productInfo.optionxform = str
-    productInfo.read('resources\\productInfo.ini')
+    productInfo = toml.load('resources\\productInfo.toml')
 
 
     filevers = ver.split('.')
