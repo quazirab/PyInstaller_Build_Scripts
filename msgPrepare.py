@@ -20,8 +20,15 @@ def getVersion(moduleName=None):
     if not moduleName:
         moduleName = os.getcwd().split('\\')[-1]
     sys.path.append('.')
-    ver = __import__(f'{moduleName}').__version__
-    return (ver)
+
+    init_file_path = os.path.join(moduleName,'__init__.py')
+
+    with open(init_file_path,'r') as handler:
+        for cnt, line in enumerate(handler):
+            if '__version__' and  "=" in line:
+                version = line[line.find('=')+1:].strip()
+                if "'" or '"' in version:
+                    return version
 
 def updateCommitMessage(version):
     os.chdir('./.git')
